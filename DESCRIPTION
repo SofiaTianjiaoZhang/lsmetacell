@@ -1,0 +1,31 @@
+Package: lsmetacell
+Title: Generate Library Size-Stabilized Meta-Cell Matrices
+Version: 0.1.0
+Authors@R: 
+    person("Tianjiao", "Zhang", 
+           email = "cb42277@um.edu.mo",
+           role = c("aut", "cre"))
+Maintainer: Tianjiao Zhang <cb42277@um.edu.mo>
+Description: Tools for generating library size-stabilized meta-cell matrices from single-cell RNA-seq data. 
+    This package implements methods to aggregate similar cells while accounting for sequencing depth variation, 
+    reducing technical noise in downstream analysis.
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+Date: 2025-03-25
+URL: https://github.com/yourusername/lsmetacell
+BugReports: https://github.com/yourusername/lsmetacell/issues
+Depends:
+    R (>= 4.0.0),
+    WGCNA
+Imports:
+    Matrix,
+    WGCNA,
+    stats
+Suggests:
+    testthat (>= 3.0.0),
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
