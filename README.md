@@ -2,9 +2,9 @@
 lsmetacell (Library Size-stabilized Metacell), a novel framework that explicitly stabilizes library sizes across metacells while preserving transcriptional heterogeneity.
 
 ## Introduction
-![summary](https://github.com/user-attachments/assets/f6a46030-4f69-434d-84f1-08a43bed6628)
+![summary](https://github.com/user-attachments/assets/2d0b465a-8bda-41ea-8948-8e448fa13573)
 
-The LSM algorithm constructs metacells with stabilized sequencing library sizes through iterative aggregation guided by transcriptional similarity (default: Pearson’s correlation) and library size constraints. The algorithm begins by calculating the target average library size $\mu_L$ across all cells. Starting with the smallest-library cell as a seed, it iteratively aggregates cells based on transcriptional similarity. At each step, a candidate cell is probabilistically selected from unassigned cells based on its aggregate affinity to the current metacell. Crucially, the algorithm enforces library size stabilization: a candidate is retained only if adding it brings the metacell’s cumulative library size closer to $\mu_L$ otherwise, it is rejected. This process continues until the metacell’s library size approaches $\mu_L$ or no suitable candidates remain. 
+The LSM algorithm constructs metacells with stabilized sequencing library sizes through iterative aggregation guided by transcriptional similarity (default: Pearson’s correlation) and library size constraints. The algorithm begins by calculating the target average library size $\mu_L$ across all cells. Starting with the smallest-library cell as a seed, it iteratively aggregates cells based on transcriptional similarity. At each step, a candidate cell is probabilistically selected from unassigned cells based on its aggregate affinity to the current metacell (The node with red circle in the picture). Crucially, the algorithm enforces library size stabilization: a candidate is retained only if adding it brings the metacell’s cumulative library size closer to $\mu_L$. This process is repeated until the metacell’s library size is closest to $\mu_L$ or no suitable candidates remain. 
 
 ## Install R Packages
 ```
