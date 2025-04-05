@@ -13,7 +13,8 @@ BiocManager::install("WGCNA")
 devtools::install_github("SofiaTianjiaoZhang/lsmetacell")
 ```
 
-##Usage
+## Usage
+### Step1 Prepare Library Stabilized Metacells
 ```
 library(lsmetacell)
 
