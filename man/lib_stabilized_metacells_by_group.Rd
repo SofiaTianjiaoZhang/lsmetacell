@@ -9,7 +9,8 @@ lib_stabilized_metacells_by_group(
   meta_cells_num = 1000,
   group_id,
   similarity_matrix = NULL,
-  seed = 123
+  seed = 123,
+  return_cell_index = FALSE
 )
 }
 \arguments{
@@ -22,13 +23,19 @@ lib_stabilized_metacells_by_group(
 \item{similarity_matrix}{Optional pre-computed cell-cell similarity matrix (default: NULL).}
 
 \item{seed}{Random seed for reproducibility (default: 123)}
+
+\item{return_cell_index}{Logical. If TRUE, return a list with
+\code{meta_cells} and \code{meta_index}; see return value below}
 }
 \value{
-A combined meta-cell expression matrix where:
-\itemize{
-\item Rows represent genes (same as input)
-\item Columns represent meta-cells with group prefixes
-\item Values are aggregated counts of constituent cells
+By default (\code{return_cell_index = FALSE}), a combined meta-cell expression
+matrix (genes × meta-cells).
+
+If \code{return_cell_index = TRUE}, a named list with components:
+\describe{
+\item{meta_cells}{genes × meta-cells expression matrix}
+\item{meta_index}{integer vector of length \code{ncol(count_matrix)} mapping
+each original cell to its meta-cell ID across all groups}
 }
 }
 \description{

@@ -7,11 +7,17 @@
 #' @param meta_cells_num Target total number of meta-cells (default: 1000).
 #' @param group_id Vector specifying group membership for each cell (length must match ncol(count_matrix))
 #' @param seed Random seed for reproducibility (default: 123)
-#' @return A combined meta-cell expression matrix where:
-#' \itemize{
-#'   \item Rows represent genes (same as input)
-#'   \item Columns represent meta-cells with group prefixes
-#'   \item Values are aggregated counts of constituent cells
+#'@param return_cell_index Logical. If TRUE, return a list with
+#'   `meta_cells` and `meta_index`; see return value below
+#' @return
+#' By default (`return_cell_index = FALSE`), a combined meta-cell expression
+#' matrix (genes × meta-cells).
+#'
+#' If `return_cell_index = TRUE`, a named list with components:
+#' \describe{
+#'   \item{meta_cells}{genes × meta-cells expression matrix}
+#'   \item{meta_index}{integer vector of length `ncol(count_matrix)` mapping
+#'                     each original cell to its meta-cell ID across all groups}
 #' }
 #'
 #' @export
@@ -25,7 +31,8 @@
 #'   meta_cells_num = 20,
 #'   group_id = groups
 #' )
-lib_stabilized_metacells_by_group <- function(count_matrix, meta_cells_num=1000,  group_id, similarity_matrix=NULL, seed=123){
+lib_stabilized_metacells_by_group <- function(count_matrix, meta_cells_num=1000,  group_id, similarity_matrix=NULL, seed=123,
+                                              return_cell_index = FALSE){
 
   # Input validation
   if (!is.matrix(count_matrix)) {
@@ -73,29 +80,46 @@ lib_stabilized_metacells_by_group <- function(count_matrix, meta_cells_num=1000,
 
   # Process each group separately
   sub_output_list <-list()
-  for (i in names(sub_cells_num)){
-    message("Processing group: ", i," (", ncol(count_matrices[[i]]), " cells)")
-    #if (sub_cells_num[i]==0){sub_cells_num[i] <- 1}
-    tryCatch({
-      sub_output <- lib_stabilized_metacells(
+  meta_index_vec <- list()
+  for (i in names(sub_cells_num)) {
+    message("Processing group: ", i, " (", ncol(count_matrices[[i]]), " cells)")
+    
+    res <- tryCatch(
+      lib_stabilized_metacells(
         count_matrices[[i]],
         similarity_matrices[[i]],
         meta_cells_num = sub_cells_num[i],
-        seed = seed
-      )
-      colnames(sub_output) <- paste(i, colnames(sub_output), sep="_")
-      sub_output_list[[i]] <- sub_output
-    }, error = function(e) {
-      warning("Failed to process group ", i, ": ", e$message)
-    })
-  }
+        seed = seed,
+        return_cell_index = TRUE  
+      ),
+      error = function(e) {
+        warning("Failed to process group ", i, ": ", e$message)
+        NULL
+      }
+    )
+    
+    if (!is.null(res)) {
+    
+      colnames(res$meta_cells) <- paste0(i, "_", colnames(res$meta_cells))
+      
+    
+      meta_index_vec[[i]] <- res$cells_index
+      
 
-  # Combine all group results
-  output <- do.call(cbind, sub_output_list[!sapply(sub_output_list, is.null)])
-  if (is.null(output)) {
+      sub_output_list[[i]] <- res$meta_cells
+    }
+  }
+  if (length(sub_output_list) == 0) {
     stop("No valid meta-cells were created from any group")
   }
+  # Combine all group results
+  output <- do.call(cbind, sub_output_list[!sapply(sub_output_list, is.null)])
+
   message("Successfully created ", ncol(output), " meta-cells across ",
           length(unique_groups), " groups")
-  return(output)
+  if (isTRUE(return_cell_index)) {
+    return(list(meta_cells = output, cells_index = meta_index_vec))
+  } else {
+    return(output)
+  }
 }

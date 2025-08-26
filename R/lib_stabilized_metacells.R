@@ -5,12 +5,18 @@
 #' @param similarity_matrix Optional pre-computed cell-cell similarity matrix (default: NULL)
 #' @param meta_cells_num Target number of meta-cells to create (default: 1000)
 #' @param seed Random seed for reproducibility (default: NULL)
+#' @param return_cell_index Logical. If `TRUE`, return a list containing both
+#'   the meta-cell matrix (`meta_cells`) and the mapping from original cells to
+#'   meta-cells (`meta_index`). Default is `FALSE` for backward compatibility.
+#' @return
+#' By default (`return_cell_index = FALSE`), a matrix of meta-cell expression
+#' (genes × meta-cells).
 #'
-#' @return A meta-cell expression matrix where:
-#' \itemize{
-#'   \item Rows represent genes (same as input)
-#'   \item Columns represent meta-cells
-#'   \item Values are aggregated counts of constituent cells
+#' If `return_cell_index = TRUE`, a named list with components:
+#' \describe{
+#'   \item{meta_cells}{genes × meta-cells expression matrix}
+#'   \item{meta_index}{integer vector of length `ncol(count_matrix)` mapping
+#'                     each original cell to its meta-cell ID}
 #' }
 #' @export
 #'
@@ -20,7 +26,7 @@
 #' # Example usage:
 #' data(sample_counts) # A genes x cells count matrix
 #' metacells <- lib_stabilized_metacells(as.matrix(sample_counts), meta_cells_num = 5)
-lib_stabilized_metacells <- function(count_matrix, similarity_matrix=NULL, meta_cells_num=1000, seed=123){
+lib_stabilized_metacells <- function(count_matrix, similarity_matrix=NULL, meta_cells_num=1000, seed=123, return_cell_index=FALSE){
   # Input validation
   if (!is.matrix(count_matrix)) {
     stop("count_matrix must be a matrix")
@@ -75,5 +81,14 @@ lib_stabilized_metacells <- function(count_matrix, similarity_matrix=NULL, meta_
   rownames(meta_cells) <- rownames(count_matrix)
   message(paste("Successfully created", ncol(meta_cells), "meta-cells"))
 
-  return(meta_cells)
+  if (isTRUE(return_cell_index)) {
+    out <- list(
+      meta_cells   = meta_cells,
+      cells_index  = lapply(meta_index, function(x) colnames(count_matrix)[as.integer(x)]) 
+    )
+  } else {
+    out <- meta_cells
+  }
+  return(out)
 }
+

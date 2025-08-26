@@ -8,7 +8,8 @@ lib_stabilized_metacells(
   count_matrix,
   similarity_matrix = NULL,
   meta_cells_num = 1000,
-  seed = 123
+  seed = 123,
+  return_cell_index = FALSE
 )
 }
 \arguments{
@@ -19,13 +20,20 @@ lib_stabilized_metacells(
 \item{meta_cells_num}{Target number of meta-cells to create (default: 1000)}
 
 \item{seed}{Random seed for reproducibility (default: NULL)}
+
+\item{return_cell_index}{Logical. If \code{TRUE}, return a list containing both
+the meta-cell matrix (\code{meta_cells}) and the mapping from original cells to
+meta-cells (\code{meta_index}). Default is \code{FALSE} for backward compatibility.}
 }
 \value{
-A meta-cell expression matrix where:
-\itemize{
-\item Rows represent genes (same as input)
-\item Columns represent meta-cells
-\item Values are aggregated counts of constituent cells
+By default (\code{return_cell_index = FALSE}), a matrix of meta-cell expression
+(genes × meta-cells).
+
+If \code{return_cell_index = TRUE}, a named list with components:
+\describe{
+\item{meta_cells}{genes × meta-cells expression matrix}
+\item{meta_index}{integer vector of length \code{ncol(count_matrix)} mapping
+each original cell to its meta-cell ID}
 }
 }
 \description{
