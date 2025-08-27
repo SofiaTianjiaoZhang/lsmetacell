@@ -13,21 +13,24 @@ BiocManager::install("WGCNA")
 devtools::install_github("SofiaTianjiaoZhang/lsmetacell")
 ```
 
-## Usage
-### Step1 Prepare Library Stabilized Metacells
+## Quick-start example (public PBMC data)
 ```
+InstallData("pbmcsca")  #first time only
+
+library(SeuratData)
+library(Seurat)
 library(lsmetacell)
+data("pbmcsca")
 
-MC <- subset(dpfc,classification=='MC')
-MC_data <- as.data.frame(MC@assays$RNA$counts)
-table(MC@meta.data$projid)
-
+#prepare data. Use only a single, homogeneous cell type when preparing data for LSM.
+B_cell <- subset(pbmcsca,CellType=='B cell')
 #prepare count data
-data <- MC_data
-#prepare group vector
-group <- MC@meta.data$projid
+data <- as.data.frame(B_cell@assays$RNA$counts)
+#prepare group vector. We strongly recommend including samples from each individual donor as a separate group in the vector.
+group <- B_cell@meta.data$Experiment
 
-meta_cells_num <- 350
+#Construct metacells
+meta_cells_num <- 1000
 pre_meta_cells <- lib_stabilized_metacells_by_group(count_matrix=as.matrix(data), meta_cells_num=meta_cells_num, group_id=group)
 ls_seurat <- CreateSeuratObject(counts = meta_cells,min.cells = 2, min.features  = 200)
 ls_shuffle_seurat <- NormalizeData(ls_shuffle_seurat)
