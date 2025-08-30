@@ -13,7 +13,7 @@ BiocManager::install("WGCNA")
 devtools::install_github("SofiaTianjiaoZhang/lsmetacell")
 ```
 
-## Quick-start example (public PBMC data)
+## Quick-start example (A public data)
 ```
 InstallData("pbmcsca")  #first time only
 
