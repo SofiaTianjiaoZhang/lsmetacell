@@ -15,9 +15,10 @@ devtools::install_github("SofiaTianjiaoZhang/lsmetacell")
 
 ## Quick-start example (A public data)
 ```
+library(SeuratData)
 InstallData("pbmcsca")  #first time only
 
-library(SeuratData)
+
 library(Seurat)
 library(lsmetacell)
 data("pbmcsca")
